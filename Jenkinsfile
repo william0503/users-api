@@ -27,15 +27,11 @@ pipeline {
                 git 'https://github.com/guiarese/users-api.git'
             }
         }
-         stage('Initialize') {
-             steps{
-                def dockerHome = tool 'myDocker'
-                env.PATH = "${dockerHome}/bin:${env.PATH}"
-             }
-        }
         stage('Building our image') {
             steps{
                 script {
+                    def dockerHome = tool 'myDocker'
+                    env.PATH = "${dockerHome}/bin:${env.PATH}"
                     dockerImage = docker.build registry + ":$BUILD_NUMBER"
                 }
             }
