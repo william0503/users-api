@@ -22,10 +22,14 @@ pipeline {
                 docker.withRegistry('', registryCredentialsId) {
 					image.push()
 				}
-            }    
+            	}    
 
                 echo "Cleaning Up"
                 sh "docker rmi $registryUrl:$BUILD_NUMBER"
+		    
+		slackSend channel: '#users-api', 
+                          message: 'Deploy do container efetuado no docker hub'
+		    
             }
         }
         
@@ -39,7 +43,9 @@ pipeline {
             
             steps {
                 sh "npm install"
-                sh "npm test"            
+                sh "npm test"   
+		slackSend channel: '#users-api', 
+                          message: 'Testes unitários efetuados com sucesso'
             }
         }
         
@@ -47,6 +53,8 @@ pipeline {
             steps {
                 sh "docker run -d -p 3000:3000 $registryUrl:$BUILD_NUMBER"
 		sh "docker ps"
+		slackSend channel: '#users-api', 
+                          message: 'Aplicação funcionando no caminho localhost:3000'
             }
         }        
     }
