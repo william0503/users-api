@@ -45,7 +45,7 @@ pipeline {
         
         stage('Deliver') {
             steps {
-                sh "docker run -d -p 3001:3000 $registryUrl:$BUILD_NUMBER"
+                sh "docker run -d -p 3000:3000 $registryUrl:$BUILD_NUMBER"
 		sh "docker ps"
 		input message: 'Finished Using The Web Site? (Click "Proceed" to continue)'
                 sh 'set -x'
