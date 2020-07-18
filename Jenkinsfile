@@ -1,59 +1,59 @@
 pipeline {
-    agent {
-        docker {
-            image 'node:12-alpine' 
-            args '-p 3000:3000' 
-        }
+    
+    environment { 
+        CI = "true"
+        image = ''
+        registryUrl = 'guiareze/users-api'
+        registryCredentialsId = 'dockerhub_id';
     }
-    environment {
-        CI = 'true'
-        registry = 'guiareze/users-api'
-        registryCredential = 'dockerhub_id'
-        dockerImage = ''
-    }
+    
+    agent any
     stages {
-        stage('Build') { 
+        stage("DockerHub Connection") {
             steps {
-                sh 'npm install' 
+                echo "Init Clone Process"
+                git  "https://github.com/guiarese/users-api.git"
+
+            script {
+                echo "Build Image"
+                image = docker.build registryUrl + ":$BUILD_NUMBER"
+                
+                echo "Deploy on DockerHub"
+                docker.withRegistry('', registryCredentialsId) {
+					image.push()
+				}
+            }    
+
+                echo "Cleaning Up"
+                sh "docker rmi $registryUrl:$BUILD_NUMBER"
             }
         }
-        stage('Test') { 
-            steps {
-                sh 'npm test'
-            }
-        }
-        stage('Cloning our Git') {
-            steps {
-                git 'https://github.com/guiarese/users-api.git'
-            }
-        }
-        stage('Building our image') {
-            steps{
-                script {
-                    def dockerHome = tool 'myDocker'
-                    env.PATH = "${dockerHome}/bin:${env.PATH}"
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
+        
+        stage('Test') {
+            agent{
+                docker {
+                    image 'node:12-alpine'
+                    args '-p 3000:3000 -p 5000:5000'
                 }
             }
-        }
-        stage('Deploy our image') {
-            steps{
-                script {
-                    docker.withRegistry( '', registryCredential ) {
-                        dockerImage.push()
-                    }
-                }
-            }
-        }
-        stage('Cleaning up') {
-            steps{
-                sh "docker rmi $registry:$BUILD_NUMBER"
-            }
-        }
-        stage('Deliver') {
+            
             steps {
-                sh 'npm start'
+                sh "npm install"
+                sh "npm test"            
             }
         }
+        
+        stage('Deliver for Development') {
+            when {
+                branch 'master'
+            }
+            steps {
+                echo "Try Start Projet on Port http://127.0.0.1:3000"
+                sh 'npm run dev'
+
+                input message: 'Finished Using The Web Site? (Click "Proceed" to continue)'
+                sh 'set -x'
+            }
+        }        
     }
 }
