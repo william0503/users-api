@@ -45,7 +45,7 @@ pipeline {
         
         stage('Deliver') {
             steps {
-                sh 'docker run -d $registryUrl:$BUILD_NUMBER'
+                sh "docker run -d $registryUrl:$BUILD_NUMBER"
             }
         }        
     }
