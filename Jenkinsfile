@@ -13,6 +13,8 @@ pipeline {
 	stage("Initial configs") {
 	    steps {
 		sh "docker ps -a -q | xargs -n 1 -P 8 -I {} docker stop {}"
+		slackSend channel: '#users-api', 
+                          message: 'Parando serviços ativos'
 	    }
 	}
 	    
