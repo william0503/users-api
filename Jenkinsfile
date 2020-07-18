@@ -6,7 +6,10 @@ pipeline {
         }
     }
     environment {
-        CI = 'true' 
+        CI = 'true'
+        registry = 'guiareze/users-api'
+        registryCredential = 'dockerhub_id'
+        dockerImage = ''
     }
     stages {
         stage('Build') { 
@@ -17,6 +20,32 @@ pipeline {
         stage('Test') { 
             steps {
                 sh 'npm test'
+            }
+        }
+        stage('Cloning our Git') {
+            steps {
+                git 'https://github.com/guiarese/users-api.git'
+            }
+        }
+        stage('Building our image') {
+            steps{
+                script {
+                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
+                }
+            }
+        }
+        stage('Deploy our image') {
+            steps{
+                script {
+                    docker.withRegistry( '', registryCredential ) {
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
+        stage('Cleaning up') {
+            steps{
+                sh "docker rmi $registry:$BUILD_NUMBER"
             }
         }
         stage('Deliver') {
