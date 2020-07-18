@@ -43,16 +43,9 @@ pipeline {
             }
         }
         
-        stage('Deliver for Development') {
-            when {
-                branch 'master'
-            }
+        stage('Deliver') {
             steps {
-                echo "Try Start Projet on Port 3000"
-                sh 'npm start'
-
-                input message: 'Finished Using The Web Site? (Click "Proceed" to continue)'
-                sh 'set -x'
+                sh 'docker run -d $registryUrl:$BUILD_NUMBER'
             }
         }        
     }
