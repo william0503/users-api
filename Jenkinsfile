@@ -46,6 +46,8 @@ pipeline {
         stage('Deliver') {
             steps {
                 sh "docker run -d $registryUrl:$BUILD_NUMBER"
+		input message: 'Finished Using The Web Site? (Click "Proceed" to continue)'
+                sh 'set -x'
             }
         }        
     }
