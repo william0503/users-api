@@ -48,8 +48,8 @@ pipeline {
                 branch 'master'
             }
             steps {
-                echo "Try Start Projet on Port http://127.0.0.1:3000"
-                sh 'npm run dev'
+                echo "Try Start Projet on Port 3000"
+                sh 'npm start'
 
                 input message: 'Finished Using The Web Site? (Click "Proceed" to continue)'
                 sh 'set -x'
