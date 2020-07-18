@@ -9,6 +9,13 @@ pipeline {
     
     agent any
     stages {
+	
+	stage("Initial configs") {
+	    steps {
+		sh "docker ps -a -q | xargs -n 1 -P 8 -I {} docker stop {}"
+	    }
+	}
+	    
         stage("DockerHub Connection") {
             steps {
                 echo "Init Clone Process"
