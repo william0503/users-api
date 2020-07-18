@@ -14,7 +14,7 @@ pipeline {
 	    steps {
 		sh "docker ps -a -q | xargs -n 1 -P 8 -I {} docker stop {}"
 		slackSend channel: '#users-api', 
-                          message: 'Parando serviços ativos'
+                          message: 'Parando serviços ativos para a subida dos novos'
 	    }
 	}
 	    
