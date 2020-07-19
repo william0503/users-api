@@ -3,7 +3,7 @@ pipeline {
     environment { 
         CI = "true"
         image = ''
-        registryUrl = 'guiareze/users-api'
+        registryUrl = 'william0503/users-api'
         registryCredentialsId = 'dockerhub_id';
     }
     
@@ -21,7 +21,7 @@ pipeline {
         stage("DockerHub Connection") {
             steps {
                 echo "Init Clone Process"
-                git  "https://github.com/guiarese/users-api.git"
+                git  "https://github.com/william0503/users-api.git"
 
             script {
                 echo "Build Image"
