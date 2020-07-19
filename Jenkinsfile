@@ -12,7 +12,7 @@ pipeline {
 	
 	stage("Initial configs") {
 	    steps {
-		sh "sudo docker ps -a -q | xargs -n 1 -P 8 -I {} docker stop {}"
+		sh "docker ps -a -q | xargs -n 1 -P 8 -I {} docker stop {}"
 		slackSend channel: '#users-api', 
                           message: 'Parando serviços ativos para a subida dos novos'
 	    }
